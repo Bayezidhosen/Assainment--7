@@ -1,14 +1,23 @@
-const BASE_URL =
-  "https://api.api-store.workers.dev/api/bazardor";
+async function fetchApi(path: string) {
+  try {
+    const response = await fetch(
+      `${BASE_URL}${path}`,
+      {
+        cache: "no-store",
+      }
+    );
 
-export async function getProducts() {
-  const res = await fetch(`${BASE_URL}/products`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch products");
+    if (response.ok) {
+      return response;
+    }
+  } catch {
+    // Primary API failed.
   }
 
-  return res.json();
+  return fetch(
+    `${FALLBACK_URL}${path}`,
+    {
+      cache: "no-store",
+    }
+  );
 }
