@@ -9,7 +9,9 @@ export default function ProductGrid({
   if (!products.length) {
     return (
       <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center">
-        <div className="text-5xl">🛒</div>
+        <div className="text-5xl">
+          🛒
+        </div>
 
         <h3 className="mt-4 text-xl font-bold">
           কোনো পণ্য পাওয়া যায়নি
@@ -26,7 +28,7 @@ export default function ProductGrid({
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {products.map((product) => (
         <ProductCard
-          key={`${product.id}-${product.slug}`}
+          key={product.id}
           product={product}
         />
       ))}

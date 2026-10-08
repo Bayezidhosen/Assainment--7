@@ -21,36 +21,38 @@ export default function CategoryNav() {
     <nav className="border-t border-slate-100 bg-white">
       <div className="mx-auto max-w-7xl overflow-x-auto px-4 sm:px-6 lg:px-8">
         <div className="flex min-w-max items-center gap-2 py-2">
-
           <Link
             href="/"
-            className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+            className={`rounded-xl px-4 py-2 text-sm font-bold ${
               pathname === "/"
                 ? "bg-green-600 text-white"
-                : "text-slate-600 hover:bg-green-50 hover:text-green-700"
+                : "text-slate-600 hover:bg-green-50"
             }`}
           >
             🏠 হোম
           </Link>
 
-          {categories.map(([slug, icon, title]) => {
-            const active = pathname === `/category/${slug}`;
+          {categories.map(
+            ([slug, icon, title]) => {
+              const active =
+                pathname ===
+                `/category/${slug}`;
 
-            return (
-              <Link
-                key={slug}
-                href={`/category/${slug}`}
-                className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-                  active
-                    ? "bg-green-600 text-white"
-                    : "text-slate-600 hover:bg-green-50 hover:text-green-700"
-                }`}
-              >
-                {icon} {title}
-              </Link>
-            );
-          })}
-
+              return (
+                <Link
+                  key={slug}
+                  href={`/category/${slug}`}
+                  className={`rounded-xl px-4 py-2 text-sm font-medium ${
+                    active
+                      ? "bg-green-600 text-white"
+                      : "text-slate-600 hover:bg-green-50 hover:text-green-700"
+                  }`}
+                >
+                  {icon} {title}
+                </Link>
+              );
+            }
+          )}
         </div>
       </div>
     </nav>

@@ -1,29 +1,42 @@
-export function toBanglaNumber(value: number): string {
-  const formatted = new Intl.NumberFormat("en-IN").format(value);
-
-  return formatted.replace(
-    /\d/g,
-    (digit) => "০১২৩৪৫৬৭৮৯"[Number(digit)]
-  );
+export function toBanglaNumber(
+  value: number
+): string {
+  return new Intl.NumberFormat(
+    "en-IN"
+  )
+    .format(value)
+    .replace(
+      /\d/g,
+      (digit) =>
+        "০১২৩৪৫৬৭৮৯"[Number(digit)]
+    );
 }
 
-export function formatPrice(value: number): string {
+export function formatPrice(
+  value: number
+): string {
   return `${toBanglaNumber(value)} টাকা`;
 }
 
-export function formatChange(value: number): string {
-  const absolute = Math.abs(value).toFixed(1);
+export function formatChange(
+  value: number
+): string {
+  const number =
+    Number(value) || 0;
 
-  const bangla = absolute.replace(
-    /\d/g,
-    (digit) => "০১২৩৪৫৬৭৮৯"[Number(digit)]
-  );
+  const bangla = Math.abs(number)
+    .toFixed(1)
+    .replace(
+      /\d/g,
+      (digit) =>
+        "০১২৩৪৫৬৭৮৯"[Number(digit)]
+    );
 
-  if (value > 0) {
+  if (number > 0) {
     return `▲ ${bangla}%`;
   }
 
-  if (value < 0) {
+  if (number < 0) {
     return `▼ ${bangla}%`;
   }
 

@@ -1,43 +1,46 @@
+export type MarketPrice = {
+  market: string;
+  division: string;
+  min: number;
+  max: number;
+};
+
 export type Product = {
-  id: string | number;
-
+  id: number;
   slug: string;
-
-  name: string;
-
-  description?: string;
-
-  category?: string;
-
-  categorySlug?: string;
-
+  nameBn: string;
+  category: string;
+  categoryNameBn: string;
+  categoryIcon: string;
   unit: string;
+  image: string;
 
+  today: number;
+  yesterday: number;
+  lastWeek: number;
+  lastMonth: number;
+
+  change: {
+    dir: "up" | "down" | "same" | string;
+    pct: number;
+  };
+
+  markets: MarketPrice[];
+
+  // UI-এর জন্য calculated values
   price: number;
-
-  minPrice?: number;
-
-  maxPrice?: number;
-
-  averagePrice?: number;
-
-  change: number;
-
+  changePercent: number;
+  minPrice: number;
+  maxPrice: number;
+  averagePrice: number;
+  name: string;
+  categorySlug: string;
   emoji: string;
-
-  image?: string;
 };
 
 export type Category = {
-  id?: string | number;
-
+  id: string;
   slug: string;
-
-  title: string;
-
-  name?: string;
-
-  icon?: string;
-
-  scrapable?: boolean;
+  nameBn: string;
+  icon: string;
 };

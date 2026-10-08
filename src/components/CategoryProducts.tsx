@@ -1,31 +1,44 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
 import type { Product } from "@/types/bazardor";
+
 import ProductGrid from "./ProductGrid";
 
-type SortOption = "default" | "low" | "high";
+type SortOption =
+  | "default"
+  | "low"
+  | "high";
 
 export default function CategoryProducts({
   products,
 }: {
   products: Product[];
 }) {
-  const [sort, setSort] = useState<SortOption>("default");
+  const [sort, setSort] =
+    useState<SortOption>("default");
 
-  const sortedProducts = useMemo(() => {
-    const result = [...products];
+  const sortedProducts =
+    useMemo(() => {
+      const result = [...products];
 
-    if (sort === "low") {
-      result.sort((a, b) => a.price - b.price);
-    }
+      if (sort === "low") {
+        result.sort(
+          (a, b) =>
+            a.price - b.price
+        );
+      }
 
-    if (sort === "high") {
-      result.sort((a, b) => b.price - a.price);
-    }
+      if (sort === "high") {
+        result.sort(
+          (a, b) =>
+            b.price - a.price
+        );
+      }
 
-    return result;
-  }, [products, sort]);
+      return result;
+    }, [products, sort]);
 
   return (
     <div>
@@ -35,7 +48,7 @@ export default function CategoryProducts({
             মোট পণ্য
           </p>
 
-          <p className="mt-1 text-lg font-black text-slate-900">
+          <p className="mt-1 text-lg font-black">
             {products.length}টি পণ্য
           </p>
         </div>
@@ -43,7 +56,7 @@ export default function CategoryProducts({
         <div className="flex items-center gap-3">
           <label
             htmlFor="sort"
-            className="text-sm font-semibold text-slate-600"
+            className="text-sm font-semibold"
           >
             সাজান:
           </label>
@@ -51,10 +64,12 @@ export default function CategoryProducts({
           <select
             id="sort"
             value={sort}
-            onChange={(e) =>
-              setSort(e.target.value as SortOption)
+            onChange={(event) =>
+              setSort(
+                event.target.value as SortOption
+              )
             }
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold"
           >
             <option value="default">
               ডিফল্ট
@@ -71,7 +86,9 @@ export default function CategoryProducts({
         </div>
       </div>
 
-      <ProductGrid products={sortedProducts} />
+      <ProductGrid
+        products={sortedProducts}
+      />
     </div>
   );
 }
