@@ -2,11 +2,12 @@
 @plugin "daisyui";
 
 :root {
-  --background: #f7f9f7;
-  --foreground: #171a18;
-  --green: #008f4c;
-  --green-dark: #006f3b;
-  --green-light: #e8f7ee;
+  --background: #f6faf7;
+  --foreground: #172019;
+  --primary: #16a34a;
+  --primary-dark: #15803d;
+  --soft-green: #eaf8ef;
+  --border: #e4ebe6;
 }
 
 * {
@@ -24,57 +25,45 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-a {
-  text-decoration: none;
+::selection {
+  background: #bbf7d0;
+  color: #14532d;
 }
 
-button {
-  font-family: inherit;
+/* Scrollbar */
+
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* Price ticker */
+::-webkit-scrollbar-track {
+  background: #f1f5f2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b7c7bc;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #86a08d;
+}
+
+/* Ticker */
 
 .ticker-wrapper {
   overflow: hidden;
-  width: 100%;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
-  background: #ffffff;
+  white-space: nowrap;
 }
 
 .ticker-track {
   display: flex;
   width: max-content;
-  animation: ticker 35s linear infinite;
+  animation: ticker 30s linear infinite;
 }
 
 .ticker-track:hover {
   animation-play-state: paused;
-}
-
-.ticker-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  white-space: nowrap;
-  border-right: 1px solid #eeeeee;
-  font-size: 14px;
-}
-
-.ticker-up {
-  color: #008f4c;
-  font-weight: 700;
-}
-
-.ticker-down {
-  color: #dc2626;
-  font-weight: 700;
-}
-
-.ticker-flat {
-  color: #6b7280;
-  font-weight: 700;
 }
 
 @keyframes ticker {
@@ -90,22 +79,27 @@ button {
 /* Skeleton */
 
 .skeleton-box {
+  position: relative;
+  overflow: hidden;
+  background: #e8eee9;
+}
+
+.skeleton-box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
   background: linear-gradient(
     90deg,
-    #eeeeee 25%,
-    #f7f7f7 50%,
-    #eeeeee 75%
+    transparent,
+    rgba(255, 255, 255, 0.65),
+    transparent
   );
-  background-size: 200% 100%;
   animation: skeleton 1.5s infinite;
 }
 
 @keyframes skeleton {
-  from {
-    background-position: 200% 0;
-  }
-
-  to {
-    background-position: -200% 0;
+  100% {
+    transform: translateX(100%);
   }
 }

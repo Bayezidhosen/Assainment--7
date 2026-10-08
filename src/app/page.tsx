@@ -1,8 +1,7 @@
 import Link from "next/link";
+
 import ProductGrid from "@/components/ProductGrid";
 import { getProducts } from "@/lib/api";
-
-
 
 export default async function HomePage() {
   const products = await getProducts();
@@ -19,93 +18,108 @@ export default async function HomePage() {
 
   return (
     <main>
-      {/* HERO */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-        <div className="grid items-center gap-10 overflow-hidden rounded-3xl bg-[#e8f7ee] px-6 py-10 sm:px-10 lg:grid-cols-2 lg:px-14">
-          
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-[#eef9f1]">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 md:py-20 lg:px-8">
           <div>
-            <span className="inline-flex rounded-full bg-white px-4 py-2 text-xs font-bold text-[#008f4c] shadow-sm">
+            <span className="inline-flex rounded-full bg-green-100 px-4 py-2 text-sm font-bold text-green-700">
               📊 প্রতিদিনের বাজারদর
             </span>
 
-            <h2 className="mt-5 text-4xl font-black leading-tight tracking-tight text-gray-900 sm:text-5xl">
+            <h1 className="mt-5 max-w-xl text-4xl font-black leading-tight text-slate-900 sm:text-5xl lg:text-6xl">
               বাজারের দাম
-              <br />
-              <span className="text-[#008f4c]">
+              <span className="block text-green-600">
                 এক নজরে জানুন
               </span>
-            </h2>
+            </h1>
 
-            <p className="mt-5 max-w-xl text-base leading-7 text-gray-600">
-              আপনার প্রয়োজনীয় পণ্যের আজকের বাজারদর,
-              দাম বৃদ্ধি ও কমার তথ্য সহজেই দেখুন।
+            <p className="mt-5 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
+              আপনার প্রতিদিনের প্রয়োজনীয় পণ্যের
+              সর্বশেষ বাজারদর সহজেই দেখে নিন।
             </p>
 
             <Link
               href="#সব-পণ্য"
-              className="mt-7 inline-flex rounded-xl bg-[#008f4c] px-6 py-3 font-bold text-white transition hover:bg-[#006f3b]"
+              className="mt-8 inline-flex rounded-2xl bg-green-600 px-6 py-3 font-bold text-white shadow-lg shadow-green-200 transition hover:bg-green-700"
             >
               সব পণ্য দেখুন →
             </Link>
           </div>
 
           <div className="flex justify-center">
-            <div className="flex h-56 w-56 items-center justify-center rounded-full bg-white text-8xl shadow-xl sm:h-72 sm:w-72 sm:text-9xl">
-              🛒
+            <div className="relative flex h-72 w-72 items-center justify-center rounded-[3rem] bg-white shadow-2xl sm:h-80 sm:w-80">
+              <div className="absolute -right-5 -top-5 rounded-2xl bg-green-600 px-4 py-3 text-sm font-bold text-white shadow-lg">
+                আজকের দাম
+              </div>
+
+              <div className="text-[9rem]">🛒</div>
+
+              <div className="absolute -bottom-5 -left-5 rounded-2xl bg-white px-5 py-4 shadow-xl">
+                <p className="text-xs text-slate-400">
+                  সহজে দেখুন
+                </p>
+
+                <p className="font-black text-green-600">
+                  বাজারদর
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* RISING */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-black text-gray-900">
-            আজ দাম বেড়েছে{" "}
-            <span className="text-[#008f4c]">▲</span>
-          </h2>
+      {/* Main */}
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* Rising */}
+        <section>
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <p className="text-sm font-bold text-green-600">
+                PRICE UP
+              </p>
 
-          <p className="mt-1 text-sm text-gray-500">
-            আজ যেসব পণ্যের দাম সবচেয়ে বেশি বেড়েছে
-          </p>
-        </div>
+              <h2 className="mt-1 text-2xl font-black text-slate-900 sm:text-3xl">
+                আজ দাম বেড়েছে ▲
+              </h2>
+            </div>
+          </div>
 
-        <ProductGrid products={risingProducts} />
-      </section>
+          <ProductGrid products={risingProducts} />
+        </section>
 
-      {/* FALLING */}
-      <section className="mx-auto mt-14 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-black text-gray-900">
-            আজ দাম কমেছে{" "}
-            <span className="text-red-500">▼</span>
-          </h2>
+        {/* Falling */}
+        <section className="mt-14">
+          <div className="mb-6">
+            <p className="text-sm font-bold text-red-500">
+              PRICE DOWN
+            </p>
 
-          <p className="mt-1 text-sm text-gray-500">
-            আজ যেসব পণ্যের দাম সবচেয়ে বেশি কমেছে
-          </p>
-        </div>
+            <h2 className="mt-1 text-2xl font-black text-slate-900 sm:text-3xl">
+              আজ দাম কমেছে ▼
+            </h2>
+          </div>
 
-        <ProductGrid products={fallingProducts} />
-      </section>
+          <ProductGrid products={fallingProducts} />
+        </section>
 
-      {/* ALL PRODUCTS */}
-      <section
-        id="সব-পণ্য"
-        className="mx-auto mt-14 max-w-7xl scroll-mt-44 px-4 sm:px-6 lg:px-8"
-      >
-        <div className="mb-6">
-          <h2 className="text-2xl font-black text-gray-900">
-            সব পণ্য
-          </h2>
+        {/* All */}
+        <section
+          id="সব-পণ্য"
+          className="mt-14 scroll-mt-52"
+        >
+          <div className="mb-6">
+            <p className="text-sm font-bold text-green-600">
+              ALL PRODUCTS
+            </p>
 
-          <p className="mt-1 text-sm text-gray-500">
-            আপনার প্রয়োজনীয় সব পণ্যের আজকের বাজারদর
-          </p>
-        </div>
+            <h2 className="mt-1 text-2xl font-black text-slate-900 sm:text-3xl">
+              সব পণ্য
+            </h2>
+          </div>
 
-        <ProductGrid products={products} />
-      </section>
+          <ProductGrid products={products} />
+        </section>
+      </div>
     </main>
   );
 }

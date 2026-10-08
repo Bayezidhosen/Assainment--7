@@ -1,86 +1,48 @@
-const tickerItems = [
-  {
-    emoji: "🍚",
-    name: "চাল",
-    price: "৭৫ টাকা/কেজি",
-    change: "▲ ২.১%",
-    type: "up",
-  },
-  {
-    emoji: "🥔",
-    name: "আলু",
-    price: "৩৫ টাকা/কেজি",
-    change: "▼ ১.৫%",
-    type: "down",
-  },
-  {
-    emoji: "🧅",
-    name: "পেঁয়াজ",
-    price: "৬০ টাকা/কেজি",
-    change: "▲ ৩.২%",
-    type: "up",
-  },
-  {
-    emoji: "🌶️",
-    name: "মরিচ",
-    price: "১৮০ টাকা/কেজি",
-    change: "▲ ৪.১%",
-    type: "up",
-  },
-  {
-    emoji: "🥚",
-    name: "ডিম",
-    price: "১৪৫ টাকা/ডজন",
-    change: "▼ ০.৮%",
-    type: "down",
-  },
-  {
-    emoji: "🐟",
-    name: "ইলিশ",
-    price: "১,৮৫০ টাকা/কেজি",
-    change: "— ০.০%",
-    type: "flat",
-  },
-  {
-    emoji: "🫘",
-    name: "মসুর ডাল",
-    price: "১২০ টাকা/কেজি",
-    change: "▲ ১.২%",
-    type: "up",
-  },
+const items = [
+  ["🍚", "চাল", "৮০ টাকা", "▲ ২.৫%"],
+  ["🥔", "আলু", "৩৫ টাকা", "▼ ১.৮%"],
+  ["🧅", "পেঁয়াজ", "৭০ টাকা", "▲ ৩.২%"],
+  ["🌶️", "মরিচ", "১২০ টাকা", "▲ ৪.১%"],
+  ["🥚", "ডিম", "১২ টাকা", "▼ ২.০%"],
+  ["🐟", "ইলিশ", "১২০০ টাকা", "▲ ৫.৪%"],
 ];
 
 export default function PriceTicker() {
-  const items = [...tickerItems, ...tickerItems];
+  const data = [...items, ...items];
 
   return (
-    <div className="ticker-wrapper">
-      <div className="ticker-track">
-        {items.map((item, index) => (
-          <div className="ticker-item" key={`${item.name}-${index}`}>
-            <span className="text-lg">{item.emoji}</span>
+    <div className="border-t border-slate-100 bg-[#f7fbf8]">
+      <div className="ticker-wrapper">
+        <div className="ticker-track gap-8 px-4 py-2">
+          {data.map(
+            ([icon, name, price, change], index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 text-sm"
+              >
+                <span>{icon}</span>
 
-            <span className="font-semibold text-gray-800">
-              {item.name}
-            </span>
+                <span className="font-semibold text-slate-700">
+                  {name}
+                </span>
 
-            <span className="text-gray-500">
-              {item.price}
-            </span>
+                <span className="text-slate-500">
+                  {price}
+                </span>
 
-            <span
-              className={
-                item.type === "up"
-                  ? "ticker-up"
-                  : item.type === "down"
-                  ? "ticker-down"
-                  : "ticker-flat"
-              }
-            >
-              {item.change}
-            </span>
-          </div>
-        ))}
+                <span
+                  className={
+                    change.startsWith("▲")
+                      ? "font-semibold text-green-600"
+                      : "font-semibold text-red-500"
+                  }
+                >
+                  {change}
+                </span>
+              </div>
+            )
+          )}
+        </div>
       </div>
     </div>
   );
