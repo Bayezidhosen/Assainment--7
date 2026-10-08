@@ -7,17 +7,21 @@ if (!uri) {
 }
 
 const globalForMongo = globalThis as unknown as {
-  mongoClient?: MongoClient;
+  mongoClient: MongoClient | undefined;
 };
 
 const client =
   globalForMongo.mongoClient ??
-  new MongoClient(uri);
+  new MongoClient(uri, {
+    serverSelectionTimeoutMS: 10000,
+  });
 
 if (process.env.NODE_ENV !== "production") {
   globalForMongo.mongoClient = client;
 }
 
 export const mongoClient = client;
-
 export const db = client.db("bazardor");
+
+
+

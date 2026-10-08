@@ -6,30 +6,71 @@ const BASE_URL =
 const FALLBACK_URL =
   "https://api.abcz.workers.dev/api/bazardor";
 
-function getArray(data: any): any[] {
+type ApiRecord = Record<string, unknown>;
+
+function getArray(data: unknown): unknown[] {
   if (Array.isArray(data)) return data;
 
-  if (Array.isArray(data?.data)) {
-    return data.data;
+  const record = data as ApiRecord | null;
+
+  if (Array.isArray(record?.data)) {
+    return record.data as unknown[];
   }
 
-  if (Array.isArray(data?.products)) {
-    return data.products;
+  if (Array.isArray(record?.products)) {
+    return record.products as unknown[];
   }
 
-  if (Array.isArray(data?.data?.products)) {
-    return data.data.products;
+  if (Array.isArray((record?.data as ApiRecord | undefined)?.products)) {
+    return (record?.data as ApiRecord).products as unknown[];
   }
 
-  if (Array.isArray(data?.categories)) {
-    return data.categories;
+  if (Array.isArray(record?.categories)) {
+    return record.categories as unknown[];
   }
 
-  if (Array.isArray(data?.data?.categories)) {
-    return data.data.categories;
+  if (Array.isArray((record?.data as ApiRecord | undefined)?.categories)) {
+    return (record?.data as ApiRecord).categories as unknown[];
   }
 
   return [];
+}
+
+function getValue(
+  source: ApiRecord,
+  keys: string[]
+): unknown {
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
+      const value = source[key];
+
+      if (value !== undefined) {
+        return value;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+function getStringValue(
+  source: ApiRecord,
+  keys: string[],
+  fallback = ""
+): string {
+  for (const key of keys) {
+    const value = source[key];
+
+    if (typeof value === "string" && value) {
+      return value;
+    }
+
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return String(value);
+    }
+  }
+
+  return fallback;
 }
 
 function toNumber(value: unknown): number {
@@ -51,83 +92,94 @@ function toNumber(value: unknown): number {
   return Number(english) || 0;
 }
 
-function getName(item: any): string {
-  return (
-    item.name ??
-    item.title ??
-    item.productName ??
-    item.product_name ??
-    item.product ??
+function getName(item: ApiRecord): string {
+  return getStringValue(
+    item,
+    [
+      "name",
+      "title",
+      "productName",
+      "product_name",
+      "product",
+    ],
     "অজানা পণ্য"
   );
 }
 
-function getImage(item: any): string {
-  return (
-    item.image ??
-    item.imageUrl ??
-    item.imageURL ??
-    item.image_url ??
-    item.productImage ??
-    item.product_image ??
-    item.thumbnail ??
-    item.thumbnailUrl ??
-    item.photo ??
-    ""
+function getImage(item: ApiRecord): string {
+  return getStringValue(
+    item,
+    [
+      "image",
+      "imageUrl",
+      "imageURL",
+      "image_url",
+      "productImage",
+      "product_image",
+      "thumbnail",
+      "thumbnailUrl",
+      "photo",
+    ]
   );
 }
 
-function getPrice(item: any): number {
+function getPrice(item: ApiRecord): number {
   return toNumber(
-    item.price ??
-      item.currentPrice ??
-      item.current_price ??
-      item.todayPrice ??
-      item.today_price ??
-      item.today ??
-      item.amount ??
-      item.rate
+    getValue(item, [
+      "price",
+      "currentPrice",
+      "current_price",
+      "todayPrice",
+      "today_price",
+      "today",
+      "amount",
+      "rate",
+    ])
   );
 }
 
-function getChange(item: any): number {
+function getChange(item: ApiRecord): number {
   return toNumber(
-    item.change ??
-      item.changePercent ??
-      item.change_percentage ??
-      item.change_percent ??
-      item.percentage ??
-      item.percent
+    getValue(item, [
+      "change",
+      "changePercent",
+      "change_percentage",
+      "change_percent",
+      "percentage",
+      "percent",
+    ])
   );
 }
 
-function getCategory(item: any): string {
-  if (typeof item.category === "string") {
-    return item.category;
+function getCategory(item: ApiRecord): string {
+  const category = item.category;
+
+  if (typeof category === "string") {
+    return category;
   }
 
-  return (
-    item.category?.title ??
-    item.category?.name ??
-    item.categoryName ??
-    item.category_name ??
-    ""
-  );
+  if (category && typeof category === "object") {
+    return getStringValue(
+      category as ApiRecord,
+      ["title", "name"],
+      getStringValue(item, ["categoryName", "category_name"], "")
+    );
+  }
+
+  return getStringValue(item, ["categoryName", "category_name"], "");
 }
 
-function getCategorySlug(item: any): string {
-  if (typeof item.category === "object") {
+function getCategorySlug(item: ApiRecord): string {
+  const category = item.category;
+
+  if (category && typeof category === "object") {
     return String(
-      item.category?.slug ??
-        item.category?.id ??
-        ""
+      getValue(category as ApiRecord, ["slug", "id"]) ?? ""
     );
   }
 
   return String(
-    item.categorySlug ??
-      item.category_slug ??
-      ""
+    getValue(item, ["categorySlug", "category_slug"]) ?? ""
   );
 }
 
@@ -193,72 +245,51 @@ function getEmoji(name: string): string {
   return "🛒";
 }
 
-function normalizeProduct(item: any): Product {
+function normalizeProduct(item: ApiRecord): Product {
   const name = getName(item);
 
   const slug = String(
-    item.slug ??
-      item.productSlug ??
-      item.product_slug ??
-      item.id ??
-      item._id ??
-      name
+    getValue(item, ["slug", "productSlug", "product_slug", "id", "_id"]) ?? name
   );
 
+  const idValue = getValue(item, ["id", "_id", "productId"]);
+  const productId: string | number =
+    typeof idValue === "string" || typeof idValue === "number"
+      ? idValue
+      : slug;
+
   return {
-    id:
-      item.id ??
-      item._id ??
-      item.productId ??
-      slug,
+    id: productId,
 
     slug,
 
     name,
 
-    description:
-      item.description ??
-      item.subtitle ??
-      item.summary ??
-      "",
+    description: getStringValue(item, ["description", "subtitle", "summary"], ""),
 
     category: getCategory(item),
 
     categorySlug: getCategorySlug(item),
 
-    unit:
-      item.unit ??
-      item.unitName ??
-      item.unit_name ??
-      item.measurement ??
-      "কেজি",
+    unit: getStringValue(item, ["unit", "unitName", "unit_name", "measurement"], "কেজি"),
 
     price: getPrice(item),
 
     minPrice: toNumber(
-      item.minPrice ??
-        item.min_price ??
-        item.minimumPrice
+      getValue(item, ["minPrice", "min_price", "minimumPrice"])
     ),
 
     maxPrice: toNumber(
-      item.maxPrice ??
-        item.max_price ??
-        item.maximumPrice
+      getValue(item, ["maxPrice", "max_price", "maximumPrice"])
     ),
 
     averagePrice: toNumber(
-      item.averagePrice ??
-        item.average_price ??
-        item.avgPrice
+      getValue(item, ["averagePrice", "average_price", "avgPrice"])
     ),
 
     change: getChange(item),
 
-    emoji:
-      item.emoji ??
-      item.icon ??
-      getEmoji(name),
+    emoji: getStringValue(item, ["emoji", "icon"], getEmoji(name)),
 
     image: getImage(item),
   };
@@ -299,7 +330,7 @@ export async function getProducts(): Promise<Product[]> {
 
   const data = await response.json();
 
-  return getArray(data).map(normalizeProduct);
+  return getArray(data).map((item) => normalizeProduct(item as ApiRecord));
 }
 
 export async function getProduct(
@@ -314,13 +345,13 @@ export async function getProduct(
       const data = await response.json();
 
       const item =
-        data?.data?.product ??
-        data?.data ??
-        data?.product ??
+        ((data as ApiRecord)?.data as ApiRecord | undefined)?.product ??
+        (data as ApiRecord)?.data ??
+        (data as ApiRecord)?.product ??
         data;
 
       if (item && typeof item === "object") {
-        return normalizeProduct(item);
+        return normalizeProduct(item as ApiRecord);
       }
     }
 
@@ -346,32 +377,23 @@ export async function getCategories(): Promise<Category[]> {
 
     const data = await response.json();
 
-    return getArray(data).map((item: any) => ({
-      id: item.id ?? item._id,
+    return getArray(data).map((item) => {
+      const record = item as ApiRecord;
 
-      slug: String(
-        item.slug ??
-          item.categorySlug ??
-          item.id ??
-          ""
-      ),
+      return {
+        id: getValue(record, ["id", "_id"]) as string | number | undefined,
 
-      title:
-        item.title ??
-        item.name ??
-        item.categoryName ??
-        "ক্যাটাগরি",
+        slug: String(
+          getValue(record, ["slug", "categorySlug", "id"]) ?? ""
+        ),
 
-      name:
-        item.name ??
-        item.title ??
-        "",
+        title: getStringValue(record, ["title", "name", "categoryName"], "ক্যাটাগরি"),
 
-      icon:
-        item.icon ??
-        item.emoji ??
-        "🛒",
-    }));
+        name: getStringValue(record, ["name", "title"], ""),
+
+        icon: getStringValue(record, ["icon", "emoji"], "🛒"),
+      };
+    });
   } catch {
     return [];
   }

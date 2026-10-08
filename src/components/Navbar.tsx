@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CategoryNav from "./CategoryNav";
 import PriceTicker from "./PriceTicker";
+import AuthActions from "./AuthActions";
 
 export default function Navbar() {
   return (
@@ -22,22 +23,9 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <div className="hidden items-center gap-2 sm:flex">
-          <Link
-            href="/signin"
-            className="rounded-xl px-4 py-2 font-semibold text-slate-700 hover:bg-slate-100"
-          >
-            সাইন ইন
-          </Link>
+        <AuthActions />
 
-          <Link
-            href="/signup"
-            className="rounded-xl bg-green-600 px-5 py-2 font-semibold text-white shadow-sm hover:bg-green-700"
-          >
-            সাইন আপ
-          </Link>
-        </div>
-
+        {/* Mobile */}
         <div className="dropdown dropdown-end sm:hidden">
           <label
             tabIndex={0}
@@ -48,14 +36,24 @@ export default function Navbar() {
 
           <ul
             tabIndex={0}
-            className="menu dropdown-content z-[100] mt-3 w-48 rounded-2xl bg-white p-3 shadow-xl"
+            className="menu dropdown-content z-[100] mt-3 w-56 rounded-2xl bg-white p-3 shadow-xl"
           >
             <li>
-              <Link href="/signin">সাইন ইন</Link>
+              <Link href="/signin">
+                সাইন ইন
+              </Link>
             </li>
 
             <li>
-              <Link href="/signup">সাইন আপ</Link>
+              <Link href="/signup">
+                সাইন আপ
+              </Link>
+            </li>
+
+            <li>
+              <Link href="/profile">
+                👤 প্রোফাইল
+              </Link>
             </li>
           </ul>
         </div>
