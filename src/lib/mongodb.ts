@@ -3,11 +3,11 @@ import { MongoClient } from "mongodb";
 const uri = process.env.MONGODB_URI;
 
 if (!uri) {
-  throw new Error("MONGODB_URI is missing in .env.local");
+  throw new Error("MONGODB_URI is missing");
 }
 
 const globalForMongo = globalThis as unknown as {
-  mongoClient: MongoClient | undefined;
+  mongoClient?: MongoClient;
 };
 
 const client =
@@ -21,7 +21,5 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export const mongoClient = client;
+
 export const db = client.db("bazardor");
-
-
-

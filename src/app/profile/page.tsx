@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
@@ -9,120 +9,166 @@ export default function ProfilePage() {
 
   const { data: session, isPending } = authClient.useSession();
 
-  async function handleSignOut() {
-    await authClient.signOut();
-
-    router.refresh();
-    router.push("/");
-  }
+  const [name, setName] = useState("");
+  const [image, setImage] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
 
   if (isPending) {
     return (
-      <main className="min-h-screen bg-[#f6faf7] px-4 py-12">
-        <div className="mx-auto max-w-2xl rounded-3xl bg-white p-8 shadow-sm">
-          <div className="animate-pulse">
-            <div className="h-20 w-20 rounded-full bg-slate-200" />
-
-            <div className="mt-5 h-7 w-48 rounded bg-slate-200" />
-
-            <div className="mt-3 h-5 w-64 rounded bg-slate-200" />
-          </div>
+      <section className="min-h-screen bg-[#f6faf7] px-4 py-10">
+        <div className="mx-auto max-w-3xl">
+          <div className="skeleton-box h-80 rounded-3xl" />
         </div>
-      </main>
+      </section>
     );
   }
 
-  if (!session?.user) {
+  if (!session) {
     return (
-      <main className="flex min-h-[70vh] items-center justify-center bg-[#f6faf7] px-4">
-        <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+      <section className="flex min-h-[70vh] items-center justify-center px-4">
+        <div className="text-center">
           <div className="text-6xl">🔐</div>
 
-          <h1 className="mt-5 text-2xl font-black text-slate-900">
+          <h1 className="mt-5 text-2xl font-black">
             আগে সাইন ইন করুন
           </h1>
 
-          <p className="mt-3 text-sm leading-6 text-slate-500">
-            প্রোফাইল দেখতে আপনার অ্যাকাউন্টে সাইন ইন করতে হবে।
-          </p>
-
-          <Link
-            href="/signin"
-            className="mt-7 inline-flex rounded-2xl bg-green-600 px-6 py-3 font-bold text-white transition hover:bg-green-700"
+          <button
+            onClick={() => router.push("/signin")}
+            className="mt-6 rounded-xl bg-green-600 px-6 py-3 font-bold text-white hover:bg-green-700"
           >
-            সাইন ইন করুন
-          </Link>
+            সাইন ইন
+          </button>
         </div>
-      </main>
+      </section>
     );
   }
 
-  const firstLetter = (
-    session.user.name ||
-    session.user.email ||
-    "U"
-  )
-    .charAt(0)
-    .toUpperCase();
+  const user = session.user;
+
+  if (!name && user.name) {
+    setName(user.name);
+  }
+
+  if (!image && user.image) {
+    setImage(user.image);
+  }
+
+  async function handleUpdate(e: FormEvent) {
+    e.preventDefault();
+
+    setSaving(true);
+    setMessage("");
+
+    const { error } = await authClient.updateUser({
+      name: name.trim(),
+      image: image.trim() || undefined,
+    });
+
+    setSaving(false);
+
+    if (error) {
+      setMessage(error.message || "Profile update করা যায়নি।");
+      return;
+    }
+
+    setMessage("প্রোফাইল সফলভাবে আপডেট হয়েছে।");
+    router.refresh();
+  }
+
+  async function handleLogout() {
+    await authClient.signOut();
+    router.push("/");
+    router.refresh();
+  }
+
+  const initial = user.name?.charAt(0)?.toUpperCase() || "U";
 
   return (
-    <main className="min-h-screen bg-[#f6faf7] px-4 py-12 sm:py-16">
-      <div className="mx-auto max-w-2xl">
-        <Link
-          href="/"
-          className="text-sm font-bold text-green-600 hover:text-green-700"
-        >
-          ← হোমে ফিরে যান
-        </Link>
-
-        <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-          <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-10 sm:px-10">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white text-4xl font-black text-green-600 shadow-lg">
-              {firstLetter}
+    <section className="min-h-screen bg-[#f6faf7] px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl">
+        <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+          <div className="bg-green-600 px-6 py-10 text-center text-white sm:px-10">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-white text-4xl font-black text-green-600 shadow-lg">
+              {initial}
             </div>
-          </div>
 
-          <div className="p-6 sm:p-10">
-            <p className="text-sm font-bold text-green-600">
-              MY PROFILE
-            </p>
-
-            <h1 className="mt-2 text-3xl font-black text-slate-900">
-              {session.user.name || "User"}
+            <h1 className="mt-5 text-3xl font-black">
+              {user.name || "ব্যবহারকারী"}
             </h1>
 
-            <div className="mt-8 space-y-4">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs font-semibold text-slate-400">
-                  নাম
-                </p>
+            <p className="mt-2 text-green-100">
+              {user.email}
+            </p>
+          </div>
 
-                <p className="mt-1 font-bold text-slate-800">
-                  {session.user.name || "নাম নেই"}
-                </p>
-              </div>
+          <form onSubmit={handleUpdate} className="space-y-6 p-6 sm:p-10">
+            <div>
+              <label className="mb-2 block text-sm font-bold text-slate-700">
+                নাম
+              </label>
 
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs font-semibold text-slate-400">
-                  ইমেইল
-                </p>
-
-                <p className="mt-1 break-all font-bold text-slate-800">
-                  {session.user.email}
-                </p>
-              </div>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                placeholder="আপনার নাম"
+              />
             </div>
 
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="mt-8 w-full rounded-2xl border border-red-200 px-5 py-3.5 font-bold text-red-500 transition hover:bg-red-50"
-            >
-              সাইন আউট
-            </button>
-          </div>
+            <div>
+              <label className="mb-2 block text-sm font-bold text-slate-700">
+                Profile Image URL
+              </label>
+
+              <input
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                placeholder="https://..."
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-bold text-slate-700">
+                Email
+              </label>
+
+              <input
+                value={user.email}
+                disabled
+                className="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-500"
+              />
+            </div>
+
+            {message && (
+              <div className="rounded-xl bg-green-50 px-4 py-3 text-sm font-semibold text-green-700">
+                {message}
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="submit"
+                disabled={saving}
+                className="flex-1 rounded-xl bg-green-600 px-6 py-3 font-bold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saving ? "আপডেট হচ্ছে..." : "প্রোফাইল আপডেট"}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-xl border border-red-200 px-6 py-3 font-bold text-red-600 hover:bg-red-50"
+              >
+                সাইন আউট
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </main>
+    </section>
   );
 }
