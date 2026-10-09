@@ -1,31 +1,41 @@
+
 import Link from "next/link";
 
+// import AuthUser from "@/components/AuthUser";
 import ProductGrid from "@/components/ProductGrid";
 import { getProducts } from "@/lib/api";
-import { formatChange, formatPrice } from "@/lib/utils";
 
 export default async function HomePage() {
   const products = await getProducts();
 
+  // Products with the highest price increases
   const sorted = [...products].sort(
-    (a, b) => b.change - a.change
+    (a, b) => b.change.pct - a.change.pct
   );
 
   const risers = sorted
-    .filter((product) => product.change > 0)
+    .filter((product) => product.change.pct > 0)
     .slice(0, 6);
 
+  // Products with the highest price decreases
   const fallers = [...products]
-    .sort((a, b) => a.change - b.change)
-    .filter((product) => product.change < 0)
+    .sort((a, b) => a.change.pct - b.change.pct)
+    .filter((product) => product.change.pct < 0)
     .slice(0, 6);
 
   return (
-    <div className="min-h-screen bg-[#f6faf7]">
+    <main className="min-h-screen bg-[#f6faf7]">
+      {/* AUTHENTICATED USER */}
+      <section className="px-4 pt-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          {/* <AuthUser /> */}
+        </div>
+      </section>
+
       {/* HERO */}
       <section className="px-4 pb-12 pt-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid overflow-hidden rounded-[2rem] bg-gradient-to-br from-green-700 to-green-500 lg:grid-cols-2">
+          <div className="grid overflow-hidden rounded-[2rem] bg-linear-to-br from-green-700 to-green-500 lg:grid-cols-2">
             <div className="px-6 py-12 text-white sm:px-10 lg:px-14 lg:py-16">
               <span className="inline-flex rounded-full bg-white/15 px-4 py-2 text-sm font-bold backdrop-blur">
                 🛒 আজকের বাজারদর
@@ -52,7 +62,7 @@ export default async function HomePage() {
             </div>
 
             <div className="hidden items-center justify-center lg:flex">
-              <div className="text-[150px]">
+              <div className="text-[150px]" aria-hidden="true">
                 🛒
               </div>
             </div>
@@ -60,16 +70,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* PRICE UP */}
+      {/* PRICE INCREASES */}
       {risers.length > 0 && (
         <section className="px-4 py-8 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-5">
               <h2 className="text-2xl font-black text-slate-900">
                 আজ দাম বেড়েছে{" "}
-                <span className="text-green-600">
-                  ▲
-                </span>
+                <span className="text-green-600">▲</span>
               </h2>
 
               <p className="mt-1 text-sm text-slate-500">
@@ -82,16 +90,14 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* PRICE DOWN */}
+      {/* PRICE DECREASES */}
       {fallers.length > 0 && (
         <section className="px-4 py-8 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="mb-5">
               <h2 className="text-2xl font-black text-slate-900">
                 আজ দাম কমেছে{" "}
-                <span className="text-red-500">
-                  ▼
-                </span>
+                <span className="text-red-500">▼</span>
               </h2>
 
               <p className="mt-1 text-sm text-slate-500">
@@ -129,6 +135,6 @@ export default async function HomePage() {
           <ProductGrid products={products} />
         </div>
       </section>
-    </div>
+    </main>
   );
 }
