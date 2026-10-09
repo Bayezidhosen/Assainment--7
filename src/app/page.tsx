@@ -1,4 +1,5 @@
 
+import Image from "next/image";
 import Link from "next/link";
 
 // import AuthUser from "@/components/AuthUser";
@@ -35,7 +36,7 @@ export default async function HomePage() {
       {/* HERO */}
       <section className="px-4 pb-12 pt-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid overflow-hidden rounded-4xl bg-linear-to-br from-green-700 to-green-500 lg:grid-cols-2">
+          <div className="display-flex grid grid-cols-1 items-center gap-10 rounded-2xl bg-green-600 sm:grid-cols-2 lg:gap-16">
             <div className="px-6 py-12 text-white sm:px-10 lg:px-14 lg:py-16">
               <span className="inline-flex rounded-full bg-white/15 px-4 py-2 text-sm font-bold backdrop-blur">
                 🛒 আজকের বাজারদর
@@ -63,7 +64,7 @@ export default async function HomePage() {
 
             <div className="hidden items-center justify-center lg:flex">
               <div className="text-[150px]" aria-hidden="true">
-                🛒
+                <Image src="/bazar-hero.png" alt="Bazar Hero" width={200} height={200} />
               </div>
             </div>
           </div>

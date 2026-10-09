@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 import Navbar from "@/components/Navbar";
@@ -6,8 +7,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "বাজার দর | BazarDor",
-  description:
-    "প্রয়োজনীয় পণ্যের বাজারদর এক নজরে জানুন।",
+  description: "প্রয়োজনীয় পণ্যের বাজারদর এক নজরে জানুন।",
 };
 
 export default function RootLayout({
@@ -23,6 +23,13 @@ export default function RootLayout({
         <main>{children}</main>
 
         <Footer />
+
+        <Toaster
+          position="top-center"
+          richColors
+          closeButton
+          duration={3000}
+        />
       </body>
     </html>
   );

@@ -71,7 +71,7 @@ export default function ProductDetails({
             </div>
 
             {/* TODAY PRICE */}
-            <div className="rounded-2xl bg-[#f0f7f2] px-6 py-4 text-center sm:min-w-[160px]">
+            <div className="rounded-2xl bg-[#f0f7f2] px-6 py-4 text-center sm:min-w-40">
               <p className="text-xs text-slate-500">
                 আজকের দাম
               </p>
@@ -171,7 +171,7 @@ export default function ProductDetails({
 
           {product.markets.length > 0 ? (
             <div className="mt-5 overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full min-w-[650px] border-collapse text-sm">
+              <table className="w-full min-w-162.5 border-collapse text-sm">
                 <thead>
                   <tr className="bg-[#f7faf8] text-left text-slate-500">
                     <th className="px-4 py-4">

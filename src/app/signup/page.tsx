@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -92,34 +93,62 @@ export default function SignUpPage() {
     }
   }
 
+  // Google এবং GitHub Sign Up
   async function handleSocialSignUp(
     provider: "google" | "github"
   ) {
     if (loading || socialLoading) return;
 
-    try {
-      setError("");
-      setSocialLoading(provider);
+    setError("");
+    setSocialLoading(provider);
 
-      await authClient.signIn.social({
+    try {
+      const { data, error } = await authClient.signIn.social({
         provider,
-        callbackURL: "/",
-        errorCallbackURL: "/signup",
+        callbackURL: `${window.location.origin}/`,
+        errorCallbackURL: `${window.location.origin}/signup`,
+        disableRedirect: true,
       });
+
+      if (error) {
+        console.error(`${provider} SIGN UP ERROR:`, error);
+
+        setError(
+          error.message ||
+            (provider === "google"
+              ? "Google দিয়ে অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।"
+              : "GitHub দিয়ে অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।")
+        );
+
+        setSocialLoading(null);
+        return;
+      }
+
+      if (data?.url) {
+        // OAuth URL পাওয়া গেলে Google/GitHub-এ redirect করবে
+        window.location.assign(data.url);
+        return;
+      }
+
+      console.error(`${provider} OAuth URL পাওয়া যায়নি:`, data);
+
+      setError(
+        provider === "google"
+          ? "Google authorization URL পাওয়া যায়নি। Google OAuth settings পরীক্ষা করুন।"
+          : "GitHub authorization URL পাওয়া যায়নি। GitHub OAuth settings পরীক্ষা করুন।"
+      );
+
+      setSocialLoading(null);
     } catch (error) {
       console.error(`${provider} SIGN UP ERROR:`, error);
 
-      setSocialLoading(null);
+      setError(
+        provider === "google"
+          ? "Google দিয়ে অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।"
+          : "GitHub দিয়ে অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।"
+      );
 
-      if (provider === "google") {
-        setError(
-          "Google দিয়ে অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।"
-        );
-      } else {
-        setError(
-          "GitHub দিয়ে অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।"
-        );
-      }
+      setSocialLoading(null);
     }
   }
 
@@ -129,13 +158,10 @@ export default function SignUpPage() {
     <main className="min-h-screen bg-[#f6faf7] px-4 py-12 sm:py-16">
       <div className="mx-auto grid max-w-5xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl md:grid-cols-2">
 
-        {/* ================= LEFT SIDE ================= */}
+        {/* LEFT SIDE */}
         <div className="hidden bg-gradient-to-br from-green-600 to-emerald-700 p-10 text-white md:flex md:flex-col md:justify-between">
           <div>
-            <Link
-              href="/"
-              className="text-2xl font-black"
-            >
+            <Link href="/" className="text-2xl font-black">
               🛒 বাজার দর
             </Link>
 
@@ -162,7 +188,7 @@ export default function SignUpPage() {
           </p>
         </div>
 
-        {/* ================= RIGHT SIDE ================= */}
+        {/* RIGHT SIDE */}
         <div className="p-6 sm:p-10">
           <div className="mx-auto max-w-md">
 
@@ -191,14 +217,17 @@ export default function SignUpPage() {
               </p>
             </div>
 
-            {/* Error */}
+            {/* Error Message */}
             {error && (
-              <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium leading-6 text-red-600">
+              <div
+                role="alert"
+                className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium leading-6 text-red-600"
+              >
                 {error}
               </div>
             )}
 
-            {/* ================= SOCIAL BUTTONS ================= */}
+            {/* SOCIAL BUTTONS */}
             <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2">
 
               {/* GOOGLE */}
@@ -217,6 +246,7 @@ export default function SignUpPage() {
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
                   >
                     <path
                       d="M23.49 12.27C23.49 11.47 23.42 10.69 23.28 9.94H12V14.32H18.47C18.19 15.73 17.38 17.22 15.7 18.2V21.08H19.38C21.54 19.09 23.49 16.02 23.49 12.27Z"
@@ -237,9 +267,7 @@ export default function SignUpPage() {
                   </svg>
                 )}
 
-                {socialLoading === "google"
-                  ? "Google..."
-                  : "Google"}
+                {socialLoading === "google" ? "Google..." : "Google"}
               </button>
 
               {/* GITHUB */}
@@ -258,14 +286,13 @@ export default function SignUpPage() {
                     viewBox="0 0 24 24"
                     fill="currentColor"
                     xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
                   >
                     <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.13c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.95.1-.74.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.59.23 2.77.11 3.06.73.81 1.18 1.84 1.18 3.1 0 4.42-2.69 5.4-5.25 5.68.41.35.78 1.04.78 2.1v3.12c0 .3.21.66.79.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
                   </svg>
                 )}
 
-                {socialLoading === "github"
-                  ? "GitHub..."
-                  : "GitHub"}
+                {socialLoading === "github" ? "GitHub..." : "GitHub"}
               </button>
             </div>
 
@@ -280,11 +307,8 @@ export default function SignUpPage() {
               <div className="h-px flex-1 bg-slate-200" />
             </div>
 
-            {/* ================= EMAIL FORM ================= */}
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-5"
-            >
+            {/* EMAIL SIGN UP FORM */}
+            <form onSubmit={handleSubmit} className="space-y-5">
 
               {/* Name */}
               <div>
@@ -395,5 +419,3 @@ export default function SignUpPage() {
     </main>
   );
 }
-
-
