@@ -7,6 +7,45 @@ import type {
 const API_BASE =
   "https://api.api-store.workers.dev/api/bazardor";
 
+interface ProductApiMarket {
+  market?: string;
+  division?: string;
+  min?: number | string;
+  max?: number | string;
+}
+
+interface ProductApiChange {
+  dir?: string;
+  pct?: number | string;
+}
+
+interface ProductApiData {
+  id?: number | string;
+  slug?: string;
+  nameBn?: string;
+  name?: string;
+  category?: string;
+  categoryNameBn?: string;
+  categoryName?: string;
+  categoryIcon?: string;
+  unit?: string;
+  image?: string;
+  today?: number | string;
+  yesterday?: number | string;
+  lastWeek?: number | string;
+  lastMonth?: number | string;
+  change?: ProductApiChange;
+  markets?: ProductApiMarket[];
+}
+
+interface CategoryApiItem {
+  id?: number | string;
+  slug?: string;
+  nameBn?: string;
+  name?: string;
+  icon?: string;
+}
+
 /* --------------------------------
    Bengali Number
 -------------------------------- */
@@ -25,11 +64,11 @@ export function toBanglaNumber(
 -------------------------------- */
 
 function normalizeProduct(
-  data: any
+  data: ProductApiData
 ): Product {
   const markets: MarketPrice[] =
     Array.isArray(data.markets)
-      ? data.markets.map((market: any) => ({
+      ? data.markets.map((market: ProductApiMarket) => ({
           market: market.market || "স্থানীয় বাজার",
           division: market.division || "",
           min: Number(market.min) || 0,
@@ -75,7 +114,7 @@ function normalizeProduct(
   return {
     id: Number(data.id),
 
-    slug: data.slug,
+    slug: data.slug || "",
 
     nameBn:
       data.nameBn ||
@@ -262,9 +301,9 @@ export async function getCategories(): Promise<Category[]> {
     }
 
     return data.map(
-      (item: any) => ({
-        id: item.id,
-        slug: item.slug,
+      (item: CategoryApiItem) => ({
+        id: String(item.id ?? ""),
+        slug: item.slug || "",
         nameBn:
           item.nameBn ||
           item.name ||

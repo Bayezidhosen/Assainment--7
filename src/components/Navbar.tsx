@@ -1,9 +1,35 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import CategoryNav from "./CategoryNav";
 import PriceTicker from "./PriceTicker";
 import AuthActions from "./AuthActions";
 
 export default function Navbar() {
+  const [date, setDate] = useState("");
+
+  useEffect(() => {
+    const updateDate = () => {
+      setDate(
+        new Intl.DateTimeFormat("bn-BD", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          timeZone: "Asia/Dhaka",
+        }).format(new Date())
+      );
+    };
+
+    updateDate();
+
+    // মধ্যরাতে তারিখ আপডেট করার জন্য
+    const timer = window.setInterval(updateDate, 60_000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
@@ -18,49 +44,15 @@ export default function Navbar() {
             </h1>
 
             <p className="text-xs text-slate-500">
-              বৃহস্পতিবার, ৮ অক্টোবর, ২০২৬
+              {date || "তারিখ লোড হচ্ছে..."}
             </p>
           </div>
         </Link>
 
         <AuthActions />
-
-        {/* Mobile */}
-        <div className="dropdown dropdown-end sm:hidden">
-          <label
-            tabIndex={0}
-            className="btn btn-ghost btn-circle"
-          >
-            ☰
-          </label>
-
-          <ul
-            tabIndex={0}
-            className="menu dropdown-content z-[100] mt-3 w-56 rounded-2xl bg-white p-3 shadow-xl"
-          >
-            <li>
-              <Link href="/signin">
-                সাইন ইন
-              </Link>
-            </li>
-
-            <li>
-              <Link href="/signup">
-                সাইন আপ
-              </Link>
-            </li>
-
-            <li>
-              <Link href="/profile">
-                👤 প্রোফাইল
-              </Link>
-            </li>
-          </ul>
-        </div>
       </div>
 
       <CategoryNav />
-
       <PriceTicker />
     </header>
   );

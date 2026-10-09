@@ -35,7 +35,7 @@ export default async function HomePage() {
       {/* HERO */}
       <section className="px-4 pb-12 pt-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="grid overflow-hidden rounded-[2rem] bg-linear-to-br from-green-700 to-green-500 lg:grid-cols-2">
+          <div className="grid overflow-hidden rounded-4xl bg-linear-to-br from-green-700 to-green-500 lg:grid-cols-2">
             <div className="px-6 py-12 text-white sm:px-10 lg:px-14 lg:py-16">
               <span className="inline-flex rounded-full bg-white/15 px-4 py-2 text-sm font-bold backdrop-blur">
                 🛒 আজকের বাজারদর

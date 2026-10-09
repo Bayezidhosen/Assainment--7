@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@plugin "daisyui";
 
 :root {
   --background: #f6faf7;
@@ -101,5 +100,41 @@ body {
 @keyframes skeleton {
   100% {
     transform: translateX(100%);
+  }
+}
+/* Responsive layout safety */
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Respect reduced motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .ticker-track,
+  .skeleton-box::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}
+
+/* Better small-screen experience */
+
+@media (max-width: 640px) {
+  .ticker-track {
+    animation-duration: 40s;
   }
 }
