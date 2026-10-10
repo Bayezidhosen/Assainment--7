@@ -9,7 +9,7 @@ export default function Footer() {
             href="/"
             className="text-xl font-black text-slate-900"
           >
-            🛒 বাজার দর
+          
           </Link>
 
           <p className="mt-3 max-w-md text-sm leading-6 text-slate-500">
@@ -19,16 +19,14 @@ export default function Footer() {
 
         <div className="md:text-right">
           <p className="text-sm leading-6 text-slate-500">
-            তথ্যগুলো বিভিন্ন উৎস থেকে সংগৃহীত।
+          
             <br />
             বাজার ও স্থানভেদে প্রকৃত দাম কিছুটা পরিবর্তিত হতে পারে।
           </p>
         </div>
       </div>
 
-      <div className="border-t border-slate-100 py-4 text-center text-xs text-slate-400">
-        © ২০২৬ বাজার দর — BazarDor
-      </div>
+      
     </footer>
   );
 }
